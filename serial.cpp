@@ -15,7 +15,7 @@ Serial::Serial(){
     baudRate = B9600;
     buf = new unsigned char[255];
     portname = new char[12];
-    portname = "/dev/ttyACM0";
+    portname = "/dev/ttyS3";
     init();
 }
 
@@ -57,7 +57,7 @@ int Serial::init(){
 
     tcsetattr( fd, TCSANOW, &tio );     // デバイスに設定を行う
 
-    ioctl(fd, TCSETS, &tio);
+    ioctl(fd, TCSETA, &tio);
 
     return 0;
 }

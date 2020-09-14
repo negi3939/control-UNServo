@@ -44,7 +44,7 @@ ifdef notrun
 		COMMAND = echo You got $(SOURCE_MAIN:%.cpp=%.out).
 endif
 
-PROGRAM = $(SOURCE_MAIN:%.cpp=%.out)
+PROGRAM = $(SOURCE_MAIN:%.cpp=%.exe)
 SUBOBJ = $(SOURCE_SUB:%.cpp=%.o)
 
 DIRX = /usr/X11R6/lib
@@ -55,6 +55,9 @@ LDFLAGS	 = -L "$(DIRX)" -lm
 all: $(PROGRAM)
 
 %.out: %.o $(SUBOBJ)
+	g++ -o $@ $^ $(LDFLAGS) -w
+	#$(COMMAND)
+%.exe: %.o $(SUBOBJ)
 	g++ -o $@ $^ $(LDFLAGS) -w
 	#$(COMMAND)
 %.o : %.cpp
