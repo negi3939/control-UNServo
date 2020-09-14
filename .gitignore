@@ -1,0 +1,9 @@
+*.out
+*.o
+*.exe
+*.dat
+*.eps
+*~
+data/*
+data/*.dat
+data/*.dat~
