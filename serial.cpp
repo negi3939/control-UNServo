@@ -63,7 +63,6 @@ int Serial::init(){
 }
 
 int Serial::read_s(){
-    //read(fd, buf, sizeof(buf));
     int len,finishf=1;
     long count = 0;
     while(finishf) {
@@ -75,12 +74,10 @@ int Serial::read_s(){
             }   
         }
         if (kbhit()){
-            std::cout << "finish" << std::endl;
-			finishf = 0;
+            finishf = 0;
 		}
     }
     std::cout << std::endl;
-	std::cout << "Stop recieving and sending" << std::endl;
     return 0;
 }
 

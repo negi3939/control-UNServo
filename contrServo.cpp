@@ -46,10 +46,14 @@ void contrServo::repeatedtorq(int num,double torq){
     for(int ii=0;ii<20;ii++){
         std::cout << "count: "<< ii << " ";
         uniservo->write_s(mvtcw);
-        usleep(utime);
+        usleep(0.5*utime);
+        readpos();
+        usleep(0.5*utime);
         std::cout << "count: "<< ii << " ";
         uniservo->write_s(mvtccw);
-        usleep(utime);
+        usleep(0.5*utime);
+        readpos();
+        usleep(0.5*utime);
         if(uniservo->getkey() == 'q'){//qを入力すると停止する
             break;
         };
@@ -62,6 +66,12 @@ void contrServo::zeropos(){
     std::string poszero = "POSORG";
     uniservo->write_s(mvzero);
     uniservo->write_s(poszero);
+}
+
+void contrServo::readpos(){
+    std::string askpos = "A?";
+    uniservo->write_s(askpos);
+    uniservo->read_s();
 }
 
 int main(int argc, char *argv[]){
