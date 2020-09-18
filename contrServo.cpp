@@ -58,13 +58,17 @@ void contrServo::repeatedtorq(int num,double torq){
 }
 
 void contrServo::zeropos(){
-    std::string mvzero = "MV 0.0";
-    //uniservo->write_s(mvzero);
+    std::string mvzero = "SV 0";
+    std::string poszero = "SO";
+    uniservo->write_s(mvzero);
+    uniservo->write_s(poszero);
 }
 
 int main(int argc, char *argv[]){
     contrServo *servo;
     int finishf = 1;
+    int count = 20;
+    double torq = 1.0d;
     if(argc>2){
         servo = new contrServo(argv[1]);
     }else{
@@ -80,7 +84,7 @@ int main(int argc, char *argv[]){
         case 'r':
             std::cout << "ready?(y)";
             while(getchar()!='y'){}
-            servo->repeatedtorq(10,1.0d);   
+            servo->repeatedtorq(count,torq);   
             break;
         case 'q':
             finishf = 0;   
