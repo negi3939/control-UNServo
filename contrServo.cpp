@@ -25,7 +25,7 @@ class contrServo : public Serial{
         ~contrServo();
 };
 
-contrServo::contrServo(){
+contrServo::contrServo() : Serial(){
     init();
 }
 contrServo::contrServo(char *devname) : Serial(B9600,devname){
@@ -92,8 +92,8 @@ int contrServo::read_s(){
     while(finishf) {
         len = read(fd, buf, sizeof(buf));   
         for(int ii = 0; ii < len; ii++) {
-            std::cout << buf[ii] ;
-            fs << buf[ii];
+            //std::cout << buf[ii] ;
+            log << buf[ii];
             if(buf[ii]=='\n'){
                 finishf = 0;
                 fs << ",";
