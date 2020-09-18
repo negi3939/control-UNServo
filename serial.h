@@ -30,7 +30,6 @@ class Serial{
         int kbhit();                    //キーボード割り込み入力の有無判定
         char getkey();                  //キーボード割り込み入力の取得 
         virtual int read_s();                   //読み取り
-        virtual int read_s(std::fstream &fs);                   //読み取り
         virtual int write_s(std::string str);                  //書き込み
         int close_s();          
         ~Serial();        

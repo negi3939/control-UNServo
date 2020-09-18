@@ -79,22 +79,6 @@ int Serial::read_s(){
     return 0;
 }
 
-int Serial::read_s(std::fstream &fs){
-    int len,finishf=1;
-    long count = 0;
-    while(finishf) {
-        len = read(fd, buf, sizeof(buf));   
-        for(int ii = 0; ii < len; ii++) {
-            std::cout << buf[ii] ;
-            fs << buf[ii];
-            if(buf[ii]=='\n'){
-                finishf = 0;
-            }   
-        }
-    }
-    std::cout << std::endl;
-    return 0;
-}
 
 int Serial::write_s(std::string str){
     ssize_t ret = 0;

@@ -11,9 +11,9 @@
 
 #include "serial.h"
 
-class contrServo{
+class contrServo : public Serial{
     protected:
-        Serial *uniservo;
+        //Serial *uniservo;
         std::fstream fs;
     public:
         contrServo();
@@ -26,16 +26,16 @@ class contrServo{
 };
 
 contrServo::contrServo(){
-    uniservo = new Serial;
+    //uniservo = new Serial;
     init();
 }
-contrServo::contrServo(char *devname){
-    uniservo = new Serial(B9600,devname);
+contrServo::contrServo(char *devname) : Serial(B9600,devname){
+    //uniservo = new Serial(B9600,devname);
     init();
 }
 
 contrServo::~contrServo(){
-    delete uniservo;
+    //delete uniservo;
 }
 
 void contrServo::init(){
@@ -61,33 +61,33 @@ void contrServo::repeatedtorq(int num,double torq){
     long utime = 1000000; 
     for(int ii=0;ii<20;ii++){
         std::cout << "count: "<< ii << " ";
-        uniservo->write_s(mvtcw);
+        write_s(mvtcw);
         usleep(0.5*utime);
         readpos();
         usleep(0.5*utime);
         std::cout << "count: "<< ii << " ";
-        uniservo->write_s(mvtccw);
+        write_s(mvtccw);
         usleep(0.5*utime);
         readpos();
         usleep(0.5*utime);
-        if(uniservo->getkey() == 'q'){//qを入力すると停止する
+        if(getkey() == 'q'){//qを入力すると停止する
             break;
         };
     }
-    uniservo->write_s(mvstop);
+    write_s(mvstop);
 }
 
 void contrServo::zeropos(){
     std::string mvzero = "SV 0";
     std::string poszero = "POSORG";
-    uniservo->write_s(mvzero);
-    uniservo->write_s(poszero);
+    write_s(mvzero);
+    write_s(poszero);
 }
 
 void contrServo::readpos(){
     std::string askpos = "A?";
-    uniservo->write_s(askpos);
-    uniservo->read_s(fs);
+    write_s(askpos);
+    read_s();
 }
 
 int main(int argc, char *argv[]){
