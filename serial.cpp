@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <string.h>
 #include <sys/types.h>
@@ -37,13 +38,13 @@ Serial::Serial(int baundrate,char *devname){
 }
 
 int Serial::init(){
+
     log.open(FILE_NAME, std::ios::trunc);
     fd = open(portname, O_RDWR);
     if (fd < 0){
         std::cout<< "open error!" <<std::endl;
         return -1;
     }
-
     tio.c_cflag += CREAD;               // 受信有効
     tio.c_cflag += CLOCAL;              // ローカルライン（モデム制御なし）
     tio.c_cflag += CS8;                 // データビット:8bit
@@ -73,9 +74,23 @@ int Serial::read_s(){
                 finishf = 0;
             }   
         }
-        if (kbhit()){
-            finishf = 0;
-		}
+    }
+    std::cout << std::endl;
+    return 0;
+}
+
+int Serial::read_s(std::fstream &fs){
+    int len,finishf=1;
+    long count = 0;
+    while(finishf) {
+        len = read(fd, buf, sizeof(buf));   
+        for(int ii = 0; ii < len; ii++) {
+            std::cout << buf[ii] ;
+            fs << buf[ii];
+            if(buf[ii]=='\n'){
+                finishf = 0;
+            }   
+        }
     }
     std::cout << std::endl;
     return 0;

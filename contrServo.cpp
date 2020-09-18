@@ -87,7 +87,7 @@ void contrServo::zeropos(){
 void contrServo::readpos(){
     std::string askpos = "A?";
     uniservo->write_s(askpos);
-    uniservo->read_s();
+    uniservo->read_s(fs);
 }
 
 int main(int argc, char *argv[]){
