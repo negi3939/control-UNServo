@@ -84,6 +84,24 @@ int Serial::read_s(){
     return 0;
 }
 
+int Serial::write_s(std::string str){
+    ssize_t ret = 0;
+    int num = str.size();
+    const char* buff = str.c_str();
+    std::string strclear = "\r\n";
+    const char* buffcl = strclear.c_str();
+    ret = write(fd, buffcl, 2);
+    ret = write(fd, buff, num);
+    ret = write(fd, buffcl, 2);
+    std::cout << "send:" << buff << std::endl; 
+    return ret;
+}
+
+int Serial::close_s(){
+    close(fd);
+    return 0;
+}
+
 int Serial::kbhit(void){
     struct termios oldt, newt;
     int ch;
@@ -104,21 +122,22 @@ int Serial::kbhit(void){
     return 0;
 }
 
-int Serial::write_s(std::string str){
-    ssize_t ret = 0;
-    int num = str.size();
-    const char* buff = str.c_str();
-    std::string strclear = "\r\n";
-    const char* buffcl = strclear.c_str();
-    ret = write(fd, buffcl, 2);
-    ret = write(fd, buff, num);
-    ret = write(fd, buffcl, 2);
-    std::cout << "send:" << buff << std::endl; 
-    return ret;
-}
-
-int Serial::close_s(){
-    close(fd);
+char Serial::getkey(){
+    struct termios oldt, newt;
+    char ch;
+    int oldf;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+    if (ch != EOF) {
+        return ch;
+    }
     return 0;
 }
 
@@ -126,24 +145,24 @@ Serial::~Serial(){
     close_s();
 }
 
-#if 1
+#if 0
 int main(){
-    Serial *arduino = new Serial;
+    Serial *uniservo = new Serial;
     std::string mvtcw = "MVT 1.0";
     std::string mvtccw = "MVT -1.0";
     std::string mvstop = "SV 0";
     long utime = 1000000; 
     for(int ii=0;ii<20;ii++){
         std::cout << "count: "<< ii << " ";
-        arduino->write_s(mvtcw);
+        uniservo->write_s(mvtcw);
         usleep(utime);
         std::cout << "count: "<< ii << " ";
-        arduino->write_s(mvtccw);
+        uniservo->write_s(mvtccw);
         usleep(utime);
     }
-    arduino->write_s(mvstop);
-    //arduino->read_s();
-    delete arduino;
+    uniservo->write_s(mvstop);
+    //uniservo->read_s();
+    delete uniservo;
     return 0;
 }
 #endif

@@ -11,7 +11,8 @@
 ifdef target
 	TARGET=$(target)
 else
-	TARGET=serial
+	TARGET=control
+	#serial
 endif
 
 ifeq ($(TARGET),serial)
@@ -19,14 +20,9 @@ ifeq ($(TARGET),serial)
 #	SOURCE_SUB = serial.cpp
 endif
 
-ifeq ($(TARGET),gnuplot)
-	SOURCE_MAIN = gnuplot.cpp
-#	SOURCE_SUB = serial.cpp
-endif
-
-ifeq ($(TARGET),serialplot)
-	SOURCE_MAIN = serialplot.cpp
-	SOURCE_SUB = serial.cpp gnuplot.cpp
+ifeq ($(TARGET),control)
+	SOURCE_MAIN = contrServo.cpp
+	SOURCE_SUB = serial.cpp
 endif
 
 ifeq ($(TARGET),main)

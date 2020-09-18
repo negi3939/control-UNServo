@@ -1,6 +1,7 @@
 *.out
 *.o
 *.exe
+*.exe*
 *.dat
 *.eps
 *~
