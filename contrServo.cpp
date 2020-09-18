@@ -13,7 +13,6 @@
 
 class contrServo : public Serial{
     protected:
-        //Serial *uniservo;
         std::fstream fs;
     public:
         contrServo();
@@ -22,21 +21,18 @@ class contrServo : public Serial{
         void repeatedtorq(int num,double torq);//繰り返す
         void zeropos();//原点へ移動
         void readpos();
+        int read_s() override;
         ~contrServo();
 };
 
 contrServo::contrServo(){
-    //uniservo = new Serial;
     init();
 }
 contrServo::contrServo(char *devname) : Serial(B9600,devname){
-    //uniservo = new Serial(B9600,devname);
     init();
 }
 
-contrServo::~contrServo(){
-    //delete uniservo;
-}
+contrServo::~contrServo(){}
 
 void contrServo::init(){
     std::stringstream filename;
@@ -88,6 +84,24 @@ void contrServo::readpos(){
     std::string askpos = "A?";
     write_s(askpos);
     read_s();
+}
+
+int contrServo::read_s(){
+    int len,finishf=1;
+    long count = 0;
+    while(finishf) {
+        len = read(fd, buf, sizeof(buf));   
+        for(int ii = 0; ii < len; ii++) {
+            std::cout << buf[ii] ;
+            fs << buf[ii];
+            if(buf[ii]=='\n'){
+                finishf = 0;
+                fs << ",";
+            }   
+        }
+    }
+    std::cout << std::endl;
+    return 0;
 }
 
 int main(int argc, char *argv[]){
