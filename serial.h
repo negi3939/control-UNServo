@@ -28,7 +28,7 @@ class Serial{
         int init();                     //ポートの初期化
         int kbhit();                    //キーボード入力の有無判定  
         virtual int read_s();                   //読み取り
-        virtual int write_s();                  //書き込み
+        virtual int write_s(std::string str);                  //書き込み
         int close_s();          
         ~Serial();        
 };

@@ -15,7 +15,7 @@ Serial::Serial(){
     baudRate = B9600;
     buf = new unsigned char[255];
     portname = new char[12];
-    portname = "/dev/ttyS3";
+    portname = "/dev/ttyS4";
     init();
 }
 
@@ -63,14 +63,17 @@ int Serial::init(){
 }
 
 int Serial::read_s(){
-    read(fd, buf, sizeof(buf));
+    //read(fd, buf, sizeof(buf));
     int len,finishf=1;
     long count = 0;
     while(finishf) {
         len = read(fd, buf, sizeof(buf));   
         for(int ii = 0; ii < len; ii++) {
-                    std::cout << buf[ii] ;
-        }   
+            std::cout << buf[ii] ;
+            if(buf[ii]=='\n'){
+                finishf = 0;
+            }   
+        }
         if (kbhit()){
             std::cout << "finish" << std::endl;
 			finishf = 0;
@@ -101,12 +104,17 @@ int Serial::kbhit(void){
     return 0;
 }
 
-int Serial::write_s(){
-    ssize_t num = 0;
-    char buff[10]="MVT 1.0\r\n";
-    std::cout << std::flush;
-    num = write(fd, &buff, 10);
-    return num;
+int Serial::write_s(std::string str){
+    ssize_t ret = 0;
+    int num = str.size();
+    const char* buff = str.c_str();
+    std::string strclear = "\r\n";
+    const char* buffcl = strclear.c_str();
+    ret = write(fd, buffcl, 2);
+    ret = write(fd, buff, num);
+    ret = write(fd, buffcl, 2);
+    std::cout << "send:" << buff << std::endl; 
+    return ret;
 }
 
 int Serial::close_s(){
@@ -121,8 +129,20 @@ Serial::~Serial(){
 #if 1
 int main(){
     Serial *arduino = new Serial;
-    arduino->write_s();
-    arduino->read_s();
+    std::string mvtcw = "MVT 1.0";
+    std::string mvtccw = "MVT -1.0";
+    std::string mvstop = "SV 0";
+    long utime = 1000000; 
+    for(int ii=0;ii<20;ii++){
+        std::cout << "count: "<< ii << " ";
+        arduino->write_s(mvtcw);
+        usleep(utime);
+        std::cout << "count: "<< ii << " ";
+        arduino->write_s(mvtccw);
+        usleep(utime);
+    }
+    arduino->write_s(mvstop);
+    //arduino->read_s();
     delete arduino;
     return 0;
 }
