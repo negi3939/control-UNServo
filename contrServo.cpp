@@ -59,7 +59,7 @@ void contrServo::repeatedtorq(int num,double torq){
 
 void contrServo::zeropos(){
     std::string mvzero = "SV 0";
-    std::string poszero = "SO";
+    std::string poszero = "POSORG";
     uniservo->write_s(mvzero);
     uniservo->write_s(poszero);
 }
