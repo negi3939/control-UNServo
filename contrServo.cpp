@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <string.h>
 #include <sys/types.h>
@@ -13,9 +14,11 @@
 class contrServo{
     protected:
         Serial *uniservo;
+        std::fstream fs;
     public:
         contrServo();
         contrServo(char *devname);
+        void init();
         void repeatedtorq(int num,double torq);//繰り返す
         void zeropos();//原点へ移動
         void readpos();
@@ -24,13 +27,26 @@ class contrServo{
 
 contrServo::contrServo(){
     uniservo = new Serial;
+    init();
 }
 contrServo::contrServo(char *devname){
     uniservo = new Serial(B9600,devname);
+    init();
 }
 
 contrServo::~contrServo(){
     delete uniservo;
+}
+
+void contrServo::init(){
+    std::stringstream filename;
+    filename << "data/testdata.dat";//保存するデータのなまえ
+    std::string f_n = filename.str();
+    fs.open(f_n.c_str(),std::ios::out);
+	if(! fs.is_open()) {
+		std::cout << "=======cannot open file=========="<<std::endl;
+		exit(1);
+	}
 }
 
 void contrServo::repeatedtorq(int num,double torq){
