@@ -12,7 +12,7 @@
 #include "serial.h"
 #include "filesave.h"
 
-class contrServo : public Serial , protected Filesave{
+class contrServo : public Serial , public Filesave{
     protected:
     public:
         contrServo();
@@ -80,7 +80,7 @@ int contrServo::read_s(){
     while(finishf) {
         len = read(fd, buf, sizeof(buf));   
         for(int ii = 0; ii < len; ii++) {
-            //std::cout << buf[ii] ;
+            std::cout << buf[ii] ;
             fs << buf[ii];
             if(buf[ii]=='\n'){
                 finishf = 0;
@@ -102,6 +102,7 @@ int main(int argc, char *argv[]){
     }else{
         servo = new contrServo;
     }
+    servo->write_f();
     servo->zeropos();
     while(finishf){
         std::cout << " ================== choose mode =============== " << std::endl;

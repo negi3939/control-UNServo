@@ -16,7 +16,7 @@ Serial::Serial(){
     baudRate = B9600;
     buf = new unsigned char[255];
     portname = new char[12];
-    portname = "/dev/ttyS4";
+    portname = "/dev/ttyS6";
     init();
 }
 
