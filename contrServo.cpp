@@ -10,14 +10,15 @@
 #include <unistd.h>
 
 #include "serial.h"
+#include "filesave.h"
 
-class contrServo : public Serial{
+class contrServo : public Serial , protected Filesave{
     protected:
-        std::fstream fs;
     public:
         contrServo();
         contrServo(char *devname);
-        void init();
+        contrServo(std::string l_f_n);
+        contrServo(char *devname,std::string l_f_n);
         void repeatedtorq(int num,double torq);//繰り返す
         void zeropos();//原点へ移動
         void readpos();
@@ -25,25 +26,12 @@ class contrServo : public Serial{
         ~contrServo();
 };
 
-contrServo::contrServo() : Serial(){
-    init();
-}
-contrServo::contrServo(char *devname) : Serial(B9600,devname){
-    init();
-}
-
+contrServo::contrServo() : Serial(),Filesave(){}
+contrServo::contrServo(char *devname) : Serial(B9600,devname),Filesave() {}
+contrServo::contrServo(std::string l_f_n) : Serial(),Filesave(l_f_n){}
+contrServo::contrServo(char *devname,std::string l_f_n) : Serial(),Filesave(l_f_n){}
 contrServo::~contrServo(){}
 
-void contrServo::init(){
-    std::stringstream filename;
-    filename << "data/testdata.dat";//保存するデータのなまえ
-    std::string f_n = filename.str();
-    fs.open(f_n.c_str(),std::ios::out);
-	if(! fs.is_open()) {
-		std::cout << "=======cannot open file=========="<<std::endl;
-		exit(1);
-	}
-}
 
 void contrServo::repeatedtorq(int num,double torq){
     char *tqch;
@@ -93,7 +81,7 @@ int contrServo::read_s(){
         len = read(fd, buf, sizeof(buf));   
         for(int ii = 0; ii < len; ii++) {
             //std::cout << buf[ii] ;
-            log << buf[ii];
+            fs << buf[ii];
             if(buf[ii]=='\n'){
                 finishf = 0;
                 fs << ",";

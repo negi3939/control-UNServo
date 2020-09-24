@@ -1,17 +1,6 @@
 #ifndef _SERIAL_H_
 #define _SERIAL_H_
 
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <unistd.h>
-
 #define FILE_NAME "data/log.dat"
 
 class Serial{
