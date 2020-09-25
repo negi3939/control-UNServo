@@ -22,6 +22,8 @@ class contrServo : public Serial , public Filesave{
         contrServo(std::string l_f_n);
         contrServo(char *devname,std::string l_f_n);
         void repeatedtorq(int num,double torq);//繰り返す
+        void constvelocity(double vel,long l_tim);
+        void consttorq(double torq,long l_tim);
         void zeropos();//原点へ移動
         void readpos();
         int read_s() override;
@@ -45,7 +47,7 @@ void contrServo::repeatedtorq(int num,double torq){
     mvtccw += tqst;
     std::string mvstop = "SV 0";
     long utime = 1000000; 
-    for(int ii=0;ii<20;ii++){
+    for(int ii=0;ii<num;ii++){
         std::cout << "count: "<< ii << " ";
         write_s(mvtcw);
         usleep(0.5*utime);
@@ -60,6 +62,46 @@ void contrServo::repeatedtorq(int num,double torq){
         readpos();
         fs << std::endl;
         usleep(0.5*utime);
+        if(getkey() == 'q'){//qを入力すると停止する
+            finish_inturkey();
+            break;
+        };
+    }
+    write_s(mvstop);
+}
+
+void contrServo::constvelocity(double vel,long l_tim){
+    long tim_unit = 10;
+    char *velch;
+    sprintf(velch,"%.3f",vel);
+    std::string mvv = "MVV ";
+    std::string mvstop = "SV 0";
+    std::string velst(velch);
+    mvv += velst;
+    write_s(mvv);
+    while(l_tim>0){
+        usleep(tim_unit);
+        l_tim -= tim_unit;
+        if(getkey() == 'q'){//qを入力すると停止する
+            finish_inturkey();
+            break;
+        };
+    }
+    write_s(mvstop);
+}
+
+void contrServo::consttorq(double torq,long l_tim){
+    long tim_unit = 10;
+    char *torqch;
+    sprintf(torqch,"%.3f",torq);
+    std::string mvt = "MVT ";
+    std::string mvstop = "SV 0";
+    std::string torqst(torqch);
+    mvt += torqst;
+    write_s(mvt);
+    while(l_tim>0){
+        usleep(tim_unit);
+        l_tim -= tim_unit;
         if(getkey() == 'q'){//qを入力すると停止する
             finish_inturkey();
             break;
@@ -106,6 +148,8 @@ int main(int argc, char *argv[]){
     int finishf = 1;
     int count = 20;
     double torq = 1.0d;
+    double velocity = 1.0d;
+    long t_tim;
     if(argc>2){
         servo = new contrServo(argv[1]);
     }else{
@@ -115,13 +159,38 @@ int main(int argc, char *argv[]){
     char ch[20];
     while(finishf){
         std::cout << " ================== choose mode =============== " << std::endl;
-        std::cout << "\t 'c':constant velocity mode" << std::endl;
+        std::cout << "\t 'v':constant velocity mode" << std::endl;
+        std::cout << "\t 't':constant torque mode" << std::endl;
         std::cout << "\t 'r':repeatd test mode" << std::endl;
         std::cout << "\t 'q':quit" << std::endl;
         std::cout << "input--------->";
         std::cin >> ch;
         switch (ch[0]){
-            case 'c':
+            case 'v':
+                std::cout << "input velocity--->";
+                std::cin >> velocity;
+                std::cout << "input running time--->";
+                std::cin >> t_tim;
+                std::cout << "velocity is " << velocity << std::endl;
+                std::cout << "running time is " << t_tim << std::endl;
+                std::cout << "ready?(y)";
+                std::cin >> ch;
+                while(ch[0]!='y'){}
+                servo->constvelocity(velocity,t_tim);
+                finishf = 0;   
+                break;
+            case 't':
+                std::cout << "input torque--->";
+                std::cin >> torq;
+                std::cout << "input running time--->";
+                std::cin >> t_tim;
+                std::cout << "torq is " << torq << std::endl;
+                std::cout << "running time is " << t_tim << std::endl;
+                std::cout << "ready?(y)";
+                std::cin >> ch;
+                while(ch[0]!='y'){}
+                servo->consttorq(torq,t_tim);
+                finishf = 0;   
                 break;
             case 'r':
                 std::cout << "input torque--->";
