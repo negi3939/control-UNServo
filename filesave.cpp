@@ -11,7 +11,7 @@
 #include "filesave.h"
 
 Filesave::Filesave(){
-    f_n = "data/testdata.dat";
+    f_n = "data/testdata.csv";
     fs.open(f_n.c_str(),std::ios::out);
 	if(! fs.is_open()) {
 		std::cout << "=======cannot open file=========="<<std::endl;

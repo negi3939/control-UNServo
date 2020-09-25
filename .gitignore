@@ -5,6 +5,9 @@
 *.dat
 *.eps
 *~
-data/*
+data/*.csv
+data/*.csv~
 data/*.dat
 data/*.dat~
+data/*.mat
+data/*.mat~
