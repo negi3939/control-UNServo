@@ -14,7 +14,7 @@
 #include "serial.h"
 
 
-Serial::Serial() : keyboard(){
+Serial::Serial(){
     baudRate = B9600;
     buf = new unsigned char[255];
     portname = new char[12];
@@ -22,12 +22,12 @@ Serial::Serial() : keyboard(){
     init();
 }
 
-Serial::Serial(int baundrate)  : keyboard(){
+Serial::Serial(int baundrate){
     baudRate = baundrate;
     buf = new unsigned char[255];
     init();
 }
-Serial::Serial(int baundrate,char *devname)  : keyboard(){
+Serial::Serial(int baundrate,char *devname){
     buf = new unsigned char[255];
     int sizename = 30;
     portname = new char[sizename];
@@ -41,7 +41,6 @@ Serial::Serial(int baundrate,char *devname)  : keyboard(){
 
 int Serial::init(){
 
-    log.open(FILE_NAME, std::ios::trunc);
     fd = open(portname, O_RDWR);
     if (fd < 0){
         std::cout<< "open error!" <<std::endl;
@@ -99,47 +98,7 @@ int Serial::close_s(){
     close(fd);
     return 0;
 }
-/*
-int Serial::kbhit(void){
-    struct termios oldt, newt;
-    int ch;
-    int oldf;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    fcntl(STDIN_FILENO, F_SETFL, oldf);
-    if (ch != EOF) {
-        ungetc(ch, stdin);
-        return 1;
-    }
-    return 0;
-}
 
-char Serial::getkey(){
-    struct termios oldt, newt;
-    char ch;
-    int oldf;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    fcntl(STDIN_FILENO, F_SETFL, oldf);
-    if (ch != EOF) {
-        ungetc(ch, stdin);
-        return ch;
-    }
-    return 0;
-}
-*/
 Serial::~Serial(){
     close_s();
 }

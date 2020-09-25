@@ -14,7 +14,7 @@
 #include "serial.h"
 #include "filesave.h"
 
-class contrServo : public Serial , public Filesave{
+class contrServo : public Serial , public Filesave , public keyboard{
     protected:
     public:
         contrServo();
@@ -24,16 +24,17 @@ class contrServo : public Serial , public Filesave{
         void repeatedtorq(int num,double torq);//繰り返す
         void constvelocity(double vel,long l_tim);
         void consttorq(double torq,long l_tim);
+        void clearerror();
         void zeropos();//原点へ移動
         void readpos();
         int read_s() override;
         ~contrServo();
 };
 
-contrServo::contrServo() : Serial(),Filesave(){}
-contrServo::contrServo(char *devname) : Serial(B9600,devname),Filesave() {}
-contrServo::contrServo(std::string l_f_n) : Serial(),Filesave(l_f_n){}
-contrServo::contrServo(char *devname,std::string l_f_n) : Serial(),Filesave(l_f_n){}
+contrServo::contrServo() : Serial(),Filesave(),keyboard(){}
+contrServo::contrServo(char *devname) : Serial(B9600,devname),Filesave(),keyboard() {}
+contrServo::contrServo(std::string l_f_n) : Serial(),Filesave(l_f_n),keyboard(){}
+contrServo::contrServo(char *devname,std::string l_f_n) : Serial(),Filesave(l_f_n),keyboard(){}
 contrServo::~contrServo(){}
 
 
@@ -110,6 +111,12 @@ void contrServo::consttorq(double torq,long l_tim){
     write_s(mvstop);
 }
 
+void contrServo::clearerror(){
+    std::string cancelst = "SVERCLR";
+    write_s(cancelst);
+    sleep(6);
+}
+
 void contrServo::zeropos(){
     std::string mvzero = "SV 0";
     std::string poszero = "POSORG";
@@ -162,6 +169,7 @@ int main(int argc, char *argv[]){
         std::cout << "\t 'v':constant velocity mode" << std::endl;
         std::cout << "\t 't':constant torque mode" << std::endl;
         std::cout << "\t 'r':repeatd test mode" << std::endl;
+        std::cout << "\t 'c':clear error" << std::endl;
         std::cout << "\t 'q':quit" << std::endl;
         std::cout << "input--------->";
         std::cin >> ch;
@@ -203,6 +211,10 @@ int main(int argc, char *argv[]){
                 std::cin >> ch;
                 while(ch[0]!='y'){}
                 servo->repeatedtorq(count,torq);
+                finishf = 0;   
+                break;
+            case 'c':
+                servo->clearerror();
                 finishf = 0;   
                 break;
             case 'q':
