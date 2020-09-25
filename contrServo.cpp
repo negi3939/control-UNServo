@@ -49,12 +49,16 @@ void contrServo::repeatedtorq(int num,double torq){
         std::cout << "count: "<< ii << " ";
         write_s(mvtcw);
         usleep(0.5*utime);
+        fs << ii << ","<< std::flush;
         readpos();
+        fs << std::endl;
         usleep(0.5*utime);
         std::cout << "count: "<< ii << " ";
         write_s(mvtccw);
         usleep(0.5*utime);
+        fs << ii << ","<< std::flush;
         readpos();
+        fs << std::endl;
         usleep(0.5*utime);
         if(getkey() == 'q'){//qを入力すると停止する
             finish_inturkey();
@@ -83,11 +87,12 @@ int contrServo::read_s(){
     while(finishf) {
         len = read(fd, buf, sizeof(buf));   
         for(int ii = 0; ii < len; ii++) {
-            std::cout << buf[ii] ;
-            fs << buf[ii];
+            std::cout << buf[ii] << std::flush;
+            if((buf[ii]!='\r')&&(buf[ii]!='\n')&&(buf[ii]!='?')&&(buf[ii]!='A')&&(buf[ii]!='=')){
+                fs << buf[ii] << std::flush;
+            }
             if(buf[ii]=='\n'){
                 finishf = 0;
-                fs << ",";
             }   
         }
     }
@@ -106,25 +111,36 @@ int main(int argc, char *argv[]){
     }else{
         servo = new contrServo;
     }
-    servo->write_f();
     servo->zeropos();
+    char ch[20];
     while(finishf){
         std::cout << " ================== choose mode =============== " << std::endl;
+        std::cout << "\t 'c':constant velocity mode" << std::endl;
         std::cout << "\t 'r':repeatd test mode" << std::endl;
         std::cout << "\t 'q':quit" << std::endl;
         std::cout << "input--------->";
-        switch (getchar()){
-        case 'r':
-            std::cout << "ready?(y)";
-            while(getchar()!='y'){}
-            servo->repeatedtorq(count,torq);
-            finishf = 0;   
-            break;
-        case 'q':
-            finishf = 0;   
-            break;
-        default:
-            break;
+        std::cin >> ch;
+        switch (ch[0]){
+            case 'c':
+                break;
+            case 'r':
+                std::cout << "input torque--->";
+                std::cin >> torq;
+                std::cout << "input number of repetitions--->";
+                std::cin >> count;
+                std::cout << "torq is " << torq << std::endl;
+                std::cout << "number is " << count << std::endl;
+                std::cout << "ready?(y)";
+                std::cin >> ch;
+                while(ch[0]!='y'){}
+                servo->repeatedtorq(count,torq);
+                finishf = 0;   
+                break;
+            case 'q':
+                finishf = 0;   
+                break;
+            default:
+                break;
         }
     }
     return 0;
