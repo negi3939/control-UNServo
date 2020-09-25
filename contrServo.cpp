@@ -45,6 +45,7 @@ contrServo::~contrServo(){}
 
 void contrServo::repeatedtorq(int num,double torq){
     char *tqch;
+    int brfl=0;
     sprintf(tqch,"%.3f",torq);
     std::string tqst(tqch);
     std::string mvtcw = "MVT ";
@@ -62,6 +63,11 @@ void contrServo::repeatedtorq(int num,double torq){
             fs << getabstime() << "," << ii << ","<< std::flush;
             readpos();
             fs << std::endl;
+            if(getkey() == 'q'){//qを入力すると停止する
+                finish_inturkey();
+                brfl = 1;
+                break;
+            };
         }
         write_s(mvtccw);
         gettimeofday(&init_time, NULL);
@@ -69,11 +75,14 @@ void contrServo::repeatedtorq(int num,double torq){
             fs << getabstime() << "," << ii << ","<< std::flush;
             readpos();
             fs << std::endl;
+            if(getkey() == 'q'){//qを入力すると停止する
+                finish_inturkey();
+                brfl = 1;
+                break;
+            };
         }
-        if(getkey() == 'q'){//qを入力すると停止する
-            finish_inturkey();
-            break;
-        };
+        if(brfl){break;}
+
     }
     write_s(mvstop);
 }
