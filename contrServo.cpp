@@ -8,7 +8,8 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
-
+#include <sys/times.h>
+#include <sys/time.h>
 
 #include "keyboard.h"
 #include "serial.h"
@@ -16,14 +17,18 @@
 
 class contrServo : public Serial , public Filesave , public keyboard{
     protected:
+        struct timeval start_time,init_time,end_time;
+        long seconds,useconds;
+        double getabstime();
+        double getreltime();
     public:
         contrServo();
         contrServo(char *devname);
         contrServo(std::string l_f_n);
         contrServo(char *devname,std::string l_f_n);
         void repeatedtorq(int num,double torq);//繰り返す
-        void constvelocity(double vel,long l_tim);
-        void consttorq(double torq,long l_tim);
+        void constvelocity(double vel,double l_tim);
+        void consttorq(double torq,double l_tim);
         void clearerror();
         void zeropos();//原点へ移動
         void readpos();
@@ -47,22 +52,25 @@ void contrServo::repeatedtorq(int num,double torq){
     mvtcw += tqst;
     mvtccw += tqst;
     std::string mvstop = "SV 0";
-    long utime = 1000000; 
+    double utime = 0.50d;
+    gettimeofday(&start_time, NULL); 
     for(int ii=0;ii<num;ii++){
         std::cout << "count: "<< ii << " ";
         write_s(mvtcw);
-        usleep(0.5*utime);
-        fs << ii << ","<< std::flush;
-        readpos();
-        fs << std::endl;
-        usleep(0.5*utime);
+        gettimeofday(&init_time, NULL);
+        while(getreltime()<0.5d*utime){
+            fs << getabstime() << "," << ii << ","<< std::flush;
+            readpos();
+            fs << std::endl;
+        }
         std::cout << "count: "<< ii << " ";
         write_s(mvtccw);
-        usleep(0.5*utime);
-        fs << ii << ","<< std::flush;
-        readpos();
-        fs << std::endl;
-        usleep(0.5*utime);
+        gettimeofday(&init_time, NULL);
+        while(getreltime()<0.5d*utime){
+            fs << getabstime() << "," << ii << ","<< std::flush;
+            readpos();
+            fs << std::endl;
+        }
         if(getkey() == 'q'){//qを入力すると停止する
             finish_inturkey();
             break;
@@ -71,7 +79,7 @@ void contrServo::repeatedtorq(int num,double torq){
     write_s(mvstop);
 }
 
-void contrServo::constvelocity(double vel,long l_tim){
+void contrServo::constvelocity(double vel,double l_tim){
     long tim_unit = 10;
     char *velch;
     sprintf(velch,"%.3f",vel);
@@ -80,9 +88,8 @@ void contrServo::constvelocity(double vel,long l_tim){
     std::string velst(velch);
     mvv += velst;
     write_s(mvv);
-    while(l_tim>0){
-        usleep(tim_unit);
-        l_tim -= tim_unit;
+    gettimeofday(&init_time, NULL);
+    while(getreltime()<l_tim){
         if(getkey() == 'q'){//qを入力すると停止する
             finish_inturkey();
             break;
@@ -91,7 +98,7 @@ void contrServo::constvelocity(double vel,long l_tim){
     write_s(mvstop);
 }
 
-void contrServo::consttorq(double torq,long l_tim){
+void contrServo::consttorq(double torq,double l_tim){
     long tim_unit = 10;
     char *torqch;
     sprintf(torqch,"%.3f",torq);
@@ -100,9 +107,8 @@ void contrServo::consttorq(double torq,long l_tim){
     std::string torqst(torqch);
     mvt += torqst;
     write_s(mvt);
-    while(l_tim>0){
-        usleep(tim_unit);
-        l_tim -= tim_unit;
+    gettimeofday(&init_time, NULL);
+    while(getreltime()<l_tim){
         if(getkey() == 'q'){//qを入力すると停止する
             finish_inturkey();
             break;
@@ -149,6 +155,22 @@ int contrServo::read_s(){
     return 0;
 }
 
+double contrServo::getabstime(){
+        gettimeofday(&end_time, NULL);
+		seconds = end_time.tv_sec - start_time.tv_sec; //seconds
+   		useconds = end_time.tv_usec - start_time.tv_usec; //milliseconds
+		double time = (double)((seconds) + useconds/1000000.0);
+        return time;
+};
+
+double contrServo::getreltime(){
+        gettimeofday(&end_time, NULL);
+		seconds = end_time.tv_sec - init_time.tv_sec; //seconds
+   		useconds = end_time.tv_usec - init_time.tv_usec; //milliseconds
+		double time = (double)((seconds) + useconds/1000000.0);
+        return time;
+};
+
 #if defined(CONTROL_IS_MAIN)
 int main(int argc, char *argv[]){
     contrServo *servo;
@@ -156,7 +178,7 @@ int main(int argc, char *argv[]){
     int count = 20;
     double torq = 1.0d;
     double velocity = 1.0d;
-    long t_tim;
+    double t_tim;
     if(argc>2){
         servo = new contrServo(argv[1]);
     }else{
