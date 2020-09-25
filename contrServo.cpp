@@ -151,7 +151,7 @@ int contrServo::read_s(){
             }   
         }
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
     return 0;
 }
 
