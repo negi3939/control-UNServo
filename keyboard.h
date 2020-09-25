@@ -7,6 +7,8 @@ class keyboard{
     public:
         keyboard();
         ~keyboard();
+        void start_inturkey();
+        void finish_inturkey();
         int kbhit();
         int getkey();
 };

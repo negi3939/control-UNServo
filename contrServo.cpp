@@ -57,6 +57,7 @@ void contrServo::repeatedtorq(int num,double torq){
         readpos();
         usleep(0.5*utime);
         if(getkey() == 'q'){//qを入力すると停止する
+            finish_inturkey();
             break;
         };
     }
@@ -111,12 +112,13 @@ int main(int argc, char *argv[]){
         std::cout << " ================== choose mode =============== " << std::endl;
         std::cout << "\t 'r':repeatd test mode" << std::endl;
         std::cout << "\t 'q':quit" << std::endl;
-        std::cout << "input->";
+        std::cout << "input--------->";
         switch (getchar()){
         case 'r':
             std::cout << "ready?(y)";
             while(getchar()!='y'){}
-            servo->repeatedtorq(count,torq);   
+            servo->repeatedtorq(count,torq);
+            finishf = 0;   
             break;
         case 'q':
             finishf = 0;   

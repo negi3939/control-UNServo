@@ -11,14 +11,12 @@
 
 #include "keyboard.h"
 
-keyboard::keyboard(){
-   tcgetattr(0,&init_tio);
-}
-    
-keyboard::~keyboard(){
-    tcsetattr(0,TCSANOW,&init_tio);
-}
-    
+keyboard::keyboard(){tcgetattr(0,&init_tio);}
+keyboard::~keyboard(){tcsetattr(0,TCSANOW,&init_tio);}
+
+void keyboard::start_inturkey(){tcgetattr(0,&init_tio);}
+void keyboard::finish_inturkey(){tcsetattr(0,TCSANOW,&init_tio);}
+
 int keyboard::kbhit(){
     struct termios tio;
     struct timeval tv;
@@ -48,3 +46,21 @@ int keyboard::getkey(){
     }
     return 0;
 }
+
+#if defined(KEY_IS_MAIN)
+int main(){
+    keyboard *key;
+    key = new keyboard; 
+    char ch;
+    while(!key->kbhit()){
+      std::cout << "input key------"<<std::endl;  
+    }
+    key->finish_inturkey();
+    while(1){
+        std::cout << "hogehoge"<<std::endl; 
+        ch = getchar();
+        std::cout << "input key is " << ch << std::endl;
+    }
+    return 0;
+}
+#endif

@@ -12,8 +12,15 @@ ifdef target
 	TARGET=$(target)
 else
 	TARGET=control
+	#key
+	#control
 	#serial
 	#file
+endif
+
+ifeq ($(TARGET),key)
+	SOURCE_MAIN = keyboard.cpp
+	CXXFLAGS = -DKEY_IS_MAIN
 endif
 
 ifeq ($(TARGET),serial)
