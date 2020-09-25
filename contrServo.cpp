@@ -142,7 +142,7 @@ int contrServo::read_s(){
     while(finishf) {
         len = read(fd, buf, sizeof(buf));   
         for(int ii = 0; ii < len; ii++) {
-            std::cout << buf[ii] << std::flush;
+            //std::cout << buf[ii] << std::flush;
             if((buf[ii]>45)&&(buf[ii]<58)){
                 fs << buf[ii] << std::flush;
             }

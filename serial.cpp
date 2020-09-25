@@ -90,7 +90,7 @@ int Serial::write_s(std::string str){
     ret = write(fd, buffcl, 2);
     ret = write(fd, buff, num);
     ret = write(fd, buffcl, 2);
-    std::cout << "send:" << buff << std::endl; 
+    //std::cout << "send:" << buff << std::endl; 
     return ret;
 }
 
