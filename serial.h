@@ -3,7 +3,7 @@
 
 #define FILE_NAME "data/log.dat"
 
-class Serial{
+class Serial : public keyboard{
     protected:
         int fd;
         unsigned char *buf;
@@ -16,8 +16,8 @@ class Serial{
         Serial(int baundrate);
         Serial(int baundrate,char *devname);
         int init();                     //ポートの初期化
-        int kbhit();                    //キーボード割り込み入力の有無判定
-        char getkey();                  //キーボード割り込み入力の取得 
+        //int kbhit();                    //キーボード割り込み入力の有無判定
+        //char getkey();                  //キーボード割り込み入力の取得 
         virtual int read_s();                   //読み取り
         virtual int write_s(std::string str);                  //書き込み
         int close_s();          

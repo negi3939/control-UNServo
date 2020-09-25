@@ -18,15 +18,19 @@ endif
 
 ifeq ($(TARGET),serial)
 	SOURCE_MAIN = serial.cpp
+	SOURCE_SUB = keyboard.cpp
+	CXXFLAGS = -DSERIAL_IS_MAIN
 endif
 
 ifeq ($(TARGET),file)
 	SOURCE_MAIN = filesave.cpp
+	CXXFLAGS = -DFILE_IS_MAIN
 endif
 
 ifeq ($(TARGET),control)
 	SOURCE_MAIN = contrServo.cpp
-	SOURCE_SUB = serial.cpp filesave.cpp
+	SOURCE_SUB = keyboard.cpp serial.cpp filesave.cpp
+	CXXFLAGS = -DCONTROL_IS_MAIN
 endif
 
 
@@ -44,7 +48,7 @@ SUBOBJ = $(SOURCE_SUB:%.cpp=%.o)
 
 DIRX = /usr/X11R6/lib
 
-CXXFLAGS = -fpermissive
+CXXFLAGS += -fpermissive
 LDFLAGS	 = -L "$(DIRX)" -lm
 
 all: $(PROGRAM)

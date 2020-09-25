@@ -9,6 +9,8 @@
 #include <termios.h>
 #include <unistd.h>
 
+
+#include "keyboard.h"
 #include "serial.h"
 #include "filesave.h"
 
@@ -92,6 +94,7 @@ int contrServo::read_s(){
     return 0;
 }
 
+#if defined(CONTROL_IS_MAIN)
 int main(int argc, char *argv[]){
     contrServo *servo;
     int finishf = 1;
@@ -124,3 +127,5 @@ int main(int argc, char *argv[]){
     }
     return 0;
 }
+
+#endif

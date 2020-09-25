@@ -36,7 +36,7 @@ Filesave::~Filesave(){
     fs.close();
 }
 
-#if 0
+#if defined(FILE_IS_MAIN)
 int main(){    
     Filesave *fsa = new Filesave;
     fsa->write_f();

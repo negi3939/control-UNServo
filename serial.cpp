@@ -9,23 +9,25 @@
 #include <termios.h>
 #include <unistd.h>
 
+
+#include "keyboard.h"
 #include "serial.h"
 
 
-Serial::Serial(){
+Serial::Serial() : keyboard(){
     baudRate = B9600;
     buf = new unsigned char[255];
     portname = new char[12];
-    portname = "/dev/ttyS6";
+    portname = "/dev/ttyS4";
     init();
 }
 
-Serial::Serial(int baundrate){
+Serial::Serial(int baundrate)  : keyboard(){
     baudRate = baundrate;
     buf = new unsigned char[255];
     init();
 }
-Serial::Serial(int baundrate,char *devname){
+Serial::Serial(int baundrate,char *devname)  : keyboard(){
     buf = new unsigned char[255];
     int sizename = 30;
     portname = new char[sizename];
@@ -97,7 +99,7 @@ int Serial::close_s(){
     close(fd);
     return 0;
 }
-
+/*
 int Serial::kbhit(void){
     struct termios oldt, newt;
     int ch;
@@ -132,16 +134,17 @@ char Serial::getkey(){
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     fcntl(STDIN_FILENO, F_SETFL, oldf);
     if (ch != EOF) {
+        ungetc(ch, stdin);
         return ch;
     }
     return 0;
 }
-
+*/
 Serial::~Serial(){
     close_s();
 }
 
-#if 0
+#if defined(SERIAL_IS_MAIN)
 int main(){
     Serial *uniservo = new Serial;
     std::string mvtcw = "MVT 1.0";
