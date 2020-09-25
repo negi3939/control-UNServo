@@ -40,6 +40,16 @@ ifeq ($(TARGET),control)
 	CXXFLAGS = -DCONTROL_IS_MAIN
 endif
 
+OS=$(shell uname | cut -d_ -f1)
+
+ifneq ($(OS),CYGWIN)
+	CXX = g++
+endif
+
+ifeq ($(OS),CYGWIN)
+	#CXX = x86_64-w64-mingw32-g++
+	CXX = g++
+endif
 
 ifdef argv
 	COMMAND = echo run;./$(SOURCE_MAIN:%.cpp=%.out) argv
@@ -61,12 +71,10 @@ LDFLAGS	 = -L "$(DIRX)" -lm
 all: $(PROGRAM)
 
 %.out: %.o $(SUBOBJ)
-	g++ -o $@ $^ $(LDFLAGS) -w
-	#$(COMMAND)
+	$(CXX) -o $@ $^ $(LDFLAGS) -w
 %.exe: %.o $(SUBOBJ)
-	g++ -o $@ $^ $(LDFLAGS) -w
-	#$(COMMAND)
+	$(CXX) -o $@ $^ $(LDFLAGS) -w
 %.o : %.cpp
-	g++ -o $@ $< -c $(CXXFLAGS) -w
+	$(CXX) -o $@ $< -c $(CXXFLAGS) -w
 clean:
 	rm -f *.o $(PROGRAM)
