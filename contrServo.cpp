@@ -179,7 +179,7 @@ int main(int argc, char *argv[]){
     double torq = 1.0d;
     double velocity = 1.0d;
     double t_tim;
-    if(argc>2){
+    if(argc>1){
         servo = new contrServo(argv[1]);
     }else{
         servo = new contrServo;
