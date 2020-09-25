@@ -55,7 +55,7 @@ void contrServo::repeatedtorq(int num,double torq){
     double utime = 0.50d;
     gettimeofday(&start_time, NULL); 
     for(int ii=0;ii<num;ii++){
-        std::cout << "count: "<< ii << " ";
+        std::cout << "torq: " << torq << "\t count: "<< ii << " / " << num << std::endl;
         write_s(mvtcw);
         gettimeofday(&init_time, NULL);
         while(getreltime()<0.5d*utime){
@@ -63,7 +63,6 @@ void contrServo::repeatedtorq(int num,double torq){
             readpos();
             fs << std::endl;
         }
-        std::cout << "count: "<< ii << " ";
         write_s(mvtccw);
         gettimeofday(&init_time, NULL);
         while(getreltime()<0.5d*utime){
